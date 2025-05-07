@@ -13,39 +13,30 @@ import '@xyflow/react/dist/style.css';
 
 const initialNodes = [
   {
-    id: 'sheets-reader',
+    id: 'node-1',
     type: 'textUpdater',
     position: { x: 0, y: 0 },
     data: { 
-      value: 'Read Google Sheets',
-      onChange: (value) => console.log('Node value changed:', value)
+      value: 'Node 1',
+      onChange: (value) => console.log('Node 1 value changed:', value)
     },
   },
   {
-    id: 'process-emails',
+    id: 'node-2',
     type: 'textUpdater',
-    position: { x: 300, y: 0 },
+    position: { x: 200, y: 100 },
     data: { 
-      value: 'Process Pending Emails',
-      onChange: (value) => console.log('Node value changed:', value)
+      value: 'Node 2',
+      onChange: (value) => console.log('Node 2 value changed:', value)
     },
   },
   {
-    id: 'send-email',
+    id: 'node-3',
     type: 'textUpdater',
-    position: { x: 600, y: 0 },
+    position: { x: 0, y: 200 },
     data: { 
-      value: 'Send Emails',
-      onChange: (value) => console.log('Node value changed:', value)
-    },
-  },
-  {
-    id: 'update-status',
-    type: 'textUpdater',
-    position: { x: 900, y: 0 },
-    data: { 
-      value: 'Update Status',
-      onChange: (value) => console.log('Node value changed:', value)
+      value: 'Node 3',
+      onChange: (value) => console.log('Node 3 value changed:', value)
     },
   },
 ];
@@ -54,23 +45,16 @@ const initialEdges = [
   { 
     id: 'edge-1-2', 
     type: 'custom-edge', 
-    source: 'sheets-reader', 
-    target: 'process-emails', 
-    data: { label: 'Get pending emails' } 
+    source: 'node-1', 
+    target: 'node-2', 
+    data: { label: 'Note 1' } 
   },
   { 
     id: 'edge-2-3', 
     type: 'custom-edge', 
-    source: 'process-emails', 
-    target: 'send-email', 
-    data: { label: 'Send to recipients' } 
-  },
-  { 
-    id: 'edge-3-4', 
-    type: 'custom-edge', 
-    source: 'send-email', 
-    target: 'update-status', 
-    data: { label: 'Mark as finished' } 
+    source: 'node-2', 
+    target: 'node-3', 
+    data: { label: 'Note 2' } 
   },
 ];
 

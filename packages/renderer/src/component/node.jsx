@@ -25,6 +25,11 @@ function TextUpdaterNode({ data }) {
     setValue(evt.target.value);
   };
 
+  const handleDelete = (evt) => {
+    evt.stopPropagation(); // Prevent double-click from triggering
+    data.onDelete?.();
+  };
+
   return (
     <div
       style={{
@@ -33,6 +38,7 @@ function TextUpdaterNode({ data }) {
         background: 'white',
         border: '1px solid #ddd',
         minWidth: '150px',
+        position: 'relative',
       }}
     >
       <Handle type="target" position={Position.Top} />
@@ -55,6 +61,29 @@ function TextUpdaterNode({ data }) {
           <div style={{ padding: '4px' }}>{value}</div>
         )}
       </div>
+      <button
+        onClick={handleDelete}
+        style={{
+          position: 'absolute',
+          top: '-10px',
+          right: '-10px',
+          width: '20px',
+          height: '20px',
+          borderRadius: '50%',
+          background: '#ff4444',
+          color: 'white',
+          border: 'none',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '12px',
+          padding: 0,
+          lineHeight: 1,
+        }}
+      >
+        ×
+      </button>
       <Handle type="source" position={Position.Bottom} />
     </div>
   );

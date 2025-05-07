@@ -42,6 +42,13 @@ export default function CustomEdge({
     setLabel(evt.target.value);
   };
 
+  const handleDelete = (evt) => {
+    evt.stopPropagation();
+    if (data?.onDelete) {
+      data.onDelete(id);
+    }
+  };
+
   return (
     <>
       <BaseEdge
@@ -65,6 +72,9 @@ export default function CustomEdge({
             cursor: 'pointer',
             border: selected ? '1px solid #ff0071' : '1px solid #ddd',
             boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px',
           }}
           onDoubleClick={handleDoubleClick}
         >
@@ -83,7 +93,30 @@ export default function CustomEdge({
               }}
             />
           ) : (
-            <span>{label || 'Double click to add note'}</span>
+            <>
+              <span>{label || 'Double click to add note'}</span>
+              <button
+                onClick={handleDelete}
+                style={{
+                  width: '16px',
+                  height: '16px',
+                  borderRadius: '50%',
+                  background: '#ff4444',
+                  color: 'white',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '10px',
+                  padding: 0,
+                  lineHeight: 1,
+                  marginLeft: '4px',
+                }}
+              >
+                ×
+              </button>
+            </>
           )}
         </div>
       </EdgeLabelRenderer>
