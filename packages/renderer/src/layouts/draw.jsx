@@ -1,123 +1,101 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import {
   ReactFlow,
-  Controls,
-  Background,
-  applyNodeChanges,
-  applyEdgeChanges,
   addEdge,
-  EdgeLabelRenderer,
+  useNodesState,
+  useEdgesState,
+  Background,
+  Controls,
 } from '@xyflow/react';
+import CustomEdge from '../component/edge';
+import TextUpdaterNode from '../component/node';
 import '@xyflow/react/dist/style.css';
 
 const initialNodes = [
   {
-    id: '1',
-    data: { label: 'Hello' },
+    id: 'sheets-reader',
+    type: 'textUpdater',
     position: { x: 0, y: 0 },
-    type: 'input',
+    data: { 
+      value: 'Read Google Sheets',
+      onChange: (value) => console.log('Node value changed:', value)
+    },
   },
   {
-    id: '2',
-    data: { label: 'World' },
-    position: { x: 100, y: 100 },
+    id: 'process-emails',
+    type: 'textUpdater',
+    position: { x: 300, y: 0 },
+    data: { 
+      value: 'Process Pending Emails',
+      onChange: (value) => console.log('Node value changed:', value)
+    },
+  },
+  {
+    id: 'send-email',
+    type: 'textUpdater',
+    position: { x: 600, y: 0 },
+    data: { 
+      value: 'Send Emails',
+      onChange: (value) => console.log('Node value changed:', value)
+    },
+  },
+  {
+    id: 'update-status',
+    type: 'textUpdater',
+    position: { x: 900, y: 0 },
+    data: { 
+      value: 'Update Status',
+      onChange: (value) => console.log('Node value changed:', value)
+    },
   },
 ];
 
-const initialEdges = [];
+const initialEdges = [
+  { 
+    id: 'edge-1-2', 
+    type: 'custom-edge', 
+    source: 'sheets-reader', 
+    target: 'process-emails', 
+    data: { label: 'Get pending emails' } 
+  },
+  { 
+    id: 'edge-2-3', 
+    type: 'custom-edge', 
+    source: 'process-emails', 
+    target: 'send-email', 
+    data: { label: 'Send to recipients' } 
+  },
+  { 
+    id: 'edge-3-4', 
+    type: 'custom-edge', 
+    source: 'send-email', 
+    target: 'update-status', 
+    data: { label: 'Mark as finished' } 
+  },
+];
 
-// Custom edge component with editable label
-const CustomEdge = ({ id, sourceX, sourceY, targetX, targetY, data, selected }) => {
-  const [label, setLabel] = useState(data?.label || '');
-  const [isEditing, setIsEditing] = useState(false);
-
-  const handleDoubleClick = () => {
-    setIsEditing(true);
-  };
-
-  const handleBlur = () => {
-    setIsEditing(false);
-  };
-
-  const handleKeyDown = (evt) => {
-    if (evt.key === 'Enter' || evt.key === 'Escape') {
-      setIsEditing(false);
-    }
-  };
-
-  const handleChange = (evt) => {
-    setLabel(evt.target.value);
-  };
-
-  return (
-    <>
-      <path
-        id={id}
-        style={{
-          stroke: selected ? '#ff0071' : '#555',
-          strokeWidth: 2,
-        }}
-        className="react-flow__edge-path"
-        d={`M ${sourceX} ${sourceY} L ${targetX} ${targetY}`}
-        onDoubleClick={handleDoubleClick}
-      />
-      {isEditing && (
-        <EdgeLabelRenderer>
-          <div
-            style={{
-              position: 'absolute',
-              transform: `translate(-50%, -50%) translate(${(sourceX + targetX) / 2}px,${(sourceY + targetY) / 2}px)`,
-              background: 'white',
-              padding: '4px 8px',
-              borderRadius: '4px',
-              fontSize: '12px',
-              pointerEvents: 'all',
-              cursor: 'pointer',
-              border: '1px solid #ff0071',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-            }}
-          >
-            <input
-              value={label}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              onKeyDown={handleKeyDown}
-              autoFocus
-              style={{
-                border: 'none',
-                outline: 'none',
-                width: '100%',
-                background: 'transparent',
-              }}
-            />
-          </div>
-        </EdgeLabelRenderer>
-      )}
-    </>
-  );
+const nodeTypes = { 
+  textUpdater: TextUpdaterNode 
 };
 
 const edgeTypes = {
-  custom: CustomEdge,
+  'custom-edge': CustomEdge,
 };
 
 function Flow() {
-  const [nodes, setNodes] = useState(initialNodes);
-  const [edges, setEdges] = useState(initialEdges);
-
-  const onNodesChange = useCallback(
-    (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-    [],
-  );
-  
-  const onEdgesChange = useCallback(
-    (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-    [],
-  );
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge({ ...params, type: 'custom' }, eds)),
-    [],
+    (connection) => {
+      const edge = { 
+        ...connection, 
+        type: 'custom-edge',
+        data: { label: '' } // Initialize with empty label
+      };
+      setEdges((eds) => addEdge(edge, eds));
+    },
+    [setEdges],
   );
 
   return (
@@ -128,6 +106,7 @@ function Flow() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         fitView
       >

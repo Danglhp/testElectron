@@ -1,5 +1,4 @@
-// import Flow from './layouts/draw';
-import Flow from './layouts/interact_edge';
+import Flow from './layouts/draw';
 function App() {
   return <Flow />;
 }
